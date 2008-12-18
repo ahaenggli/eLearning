@@ -1,0 +1,74 @@
+AddType text/x-component htc
+
+<FilesMatch "(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+Header set Cache-Control "max-age=604800, public"
+#604800
+</FilesMatch>
+
+RewriteEngine On
+#rewritebase /
+
+RewriteCond %{HTTPS} !=on
+RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{HTTP_HOST} !^www\.
+RewriteCond %{HTTP_HOST} !^asyn\.
+RewriteCond %{HTTP_HOST} !^haenggli.net
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+
+## Doppelter Slash entfernen
+RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
+RewriteRule . %1/%2 [R=301,L]
+
+# Ausnahmen definieren
+RewriteRule ^(css|acp|images|js|files)($|/)(.*) - [L]
+RewriteRule ^(css|acp|images|js|files) - [L]
+RewriteRule ^(.txt) - [L]
+
+## Slash am Ende
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI}/ [R=301,L]
+
+## + und Zahl am Ende
+## RewriteCond %{REQUEST_URI} ^(.*)/\+/([0-9]+)/$
+## RewriteRule . %1/%2/ [R=301,L]
+
+## Deutsch
+## RewriteCond %{REQUEST_FILENAME} !-f
+## RewriteCond %{REQUEST_URI} !(de|fr)($|/)(.*)$
+## RewriteCond %{HTTP:Accept-Language} ^de [NC]
+## RewriteRule ^(.*)$ http://%{HTTP_HOST}/~mutation/admin/de/$1 [L,R=301]
+
+## Franz
+## RewriteCond %{REQUEST_FILENAME} !-f
+## RewriteCond %{REQUEST_URI} !(de|fr)($|/)(.*)$
+## RewriteCond %{HTTP:Accept-Language} ^fr [NC]
+## RewriteRule ^(.*)$ http://%{HTTP_HOST}/~mutation/admin/fr/$1 [L,R=301]
+
+## Sitemap...
+RewriteRule ^sitemap.xml$ sitemap.php [L]
+
+## Für modernere Links
+RewriteRule ^de/($|[a-z-A-Z_0-9.]+)($|/)$ index.php?lang=de&p=$1
+RewriteRule ^fr/($|[a-z-A-Z_0-9.]+)($|/)$ index.php?lang=fr&p=$1
+RewriteRule ^de/(.*)/($|[a-z-A-Z_0-9.]+)($|/)$ index.php?lang=de&p=$2
+RewriteRule ^fr/(.*)/($|[a-z-A-Z_0-9.]+)($|/)$ index.php?lang=fr&p=$2
+
+## RewriteRule ^acp/($|[a-z-A-Z_0-9.]+)($|/)$ index.php?lang=de&p=$1&isACP=true [L]
+## RewriteRule ^acp/(.*)/($|[a-z-A-Z_0-9.]+)/$ index.php?lang=de&p=$2&beforData=$1&isACP=true [L]
+## RewriteRule ^acp/($|[a-z-A-Z_0-9.]+)/([+])/$ index.php?lang=de&p=$1&isACP=true&doAdd=true [L]
+## RewriteRule ^acp/(.*)/($|[a-z-A-Z_0-9.]+)/([+])/$ index.php?lang=de&p=$2&beforData=$1&isACP=true&doAdd=true [L]
+
+RewriteRule ^($|[a-z-A-Z_0-9.]+)/$ index.php?lang=de&p=$1
+RewriteRule ^(.*)/($|[a-z-A-Z_0-9.]+)/$ index.php?lang=de&p=$2&beforData=$1
+
+## RewriteRule ^([a-z]+)/$ index.php?lang=$1&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/$ index.php?lang=$1&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/zip/([0-9]+)/([0-9]+)/$ index.php?lang=$1&DoZip=1&id=$3&grp=$4&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/download/([0-9]+)/$ index.php?lang=$1&DoDownload=1&id=$3&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/download/$ index.php?lang=$1&DoDownload=1&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/\+/$ index.php?lang=$1&id=0&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/([0-9]+)/$ index.php?lang=$1&id=$3&p=$2
+## RewriteRule ^([a-z]+)/([a-z-A-Z_0-9.]+)/seite/([0-9]+)/$ index.php?lang=$1&p=$2&select_seite=$3
+### RewriteRule ^([a-z]+)/(.*)/([a-z-A-Z_0-9.]+)/$ index.php?lang=$1&p=$3

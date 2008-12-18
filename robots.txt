@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /acp/
+Disallow: /backup/
+Disallow: /modules/
+Disallow: /tmp/
